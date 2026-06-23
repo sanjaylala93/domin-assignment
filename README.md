@@ -1,75 +1,97 @@
-# React + TypeScript + Vite
+# Domin — Factory Monitoring Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time production line monitoring dashboard for a hydraulic valve manufacturing facility. Built as part of the Domin frontend engineering interview task.
 
-Currently, two official plugins are available:
+**Live demo:** https://domin-assignment-4n1n.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Overview
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+The application gives operations engineers a live view of the production line — machine statuses, utilisation trends, fault counts, and throughput. Data is simulated via an in-browser mock layer that mirrors what a real REST/SSE API would provide.
 
-Note: This will impact Vite dev & build performances.
+Two main views:
 
-## Expanding the ESLint configuration
+- **Dashboard** — factory-wide KPIs, utilisation chart with 1h/4h/24h time range toggle, and a status breakdown
+- **Stations** — per-machine table with status badges, utilisation bars, time-in-state, and CSV export
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Concern | Choice |
+|---|---|
+| Framework | React 19 + TypeScript |
+| Build | Vite |
+| Routing | React Router v7 |
+| Data fetching | TanStack Query v5 |
+| Global state | Zustand |
+| Charts | Recharts |
+| Styling | Tailwind CSS v4 |
+| Testing | Vitest + React Testing Library |
+| Linting / formatting | ESLint + Prettier |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Getting started
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm test       # run tests
+pnpm build      # production build
 ```
+
+Node 18+ and pnpm required.
+
+---
+
+## Project structure
+
+```
+src/
+  design-system/        # Component library (Badge, Card, Button, etc.)
+    components/
+    tokens/             # Colour tokens — single source of truth
+    utils/
+  components/
+    features/           # Feature-scoped components (dashboard, stations)
+    layout/             # AppLayout, Sidebar, TopBar
+  hooks/                # useMachines, useUtilisationHistory
+  mock/                 # Simulated API (fixtures, simulator, api.ts)
+  pages/                # Route-level components
+  utils/                # format.ts, export.ts
+```
+
+The design system lives at `src/design-system/` and is aliased as `@domin/ui` so it behaves like a separate package without the overhead of a monorepo.
+
+---
+
+## Architecture
+
+See `architecture_diagram.png` for the full system diagram (Part 1 of the task).
+
+At a high level:
+
+- **Layer 1 — Infrastructure:** Machinery reports telemetry (temp, pressure, RPM etc.) via a DAQ process into PostgreSQL
+- **Layer 2 — API:** Python REST API exposes static endpoints (polling) and SSE endpoints (streaming) behind an auth layer
+- **Layer 3 — Frontend:** TanStack Query handles polling/SSE, domain hooks encapsulate business logic, a component layer built on top of the design system renders the UI
+
+In this submission the API layer is replaced by `src/mock/` — a browser-side simulator that generates realistic machine state and history data.
+
+---
+
+## AI disclosure
+
+Claude (Anthropic) was used throughout this task as a coding assistant via Claude Code. Its role:
+
+- **Scaffolding** — initial project setup, routing, mock data layer
+- **Component implementation** — dashboard KPIs, utilisation chart, stations table, design system components
+- **Design decisions** — translating the reference screenshots into component structure and token-based styling
+- **Tooling** — Prettier/ESLint config, Vitest test suite setup
+- **Deployment** — resolving TypeScript build errors for Vercel
+
+All architectural decisions, the system diagram, and the overall approach were my own. Claude accelerated implementation but the structure, decisions, and judgement calls were directed by me. I reviewed and understood every piece of code before accepting it.

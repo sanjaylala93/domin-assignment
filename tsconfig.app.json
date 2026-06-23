@@ -22,11 +22,13 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Path aliases */
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@domin/ui": ["src/design-system/index.ts"],
       "@domin/ui/*": ["src/design-system/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/test"]
 }

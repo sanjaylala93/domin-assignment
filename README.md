@@ -25,7 +25,6 @@ Two main views:
 | Build | Vite |
 | Routing | React Router v7 |
 | Data fetching | TanStack Query v5 |
-| Global state | Zustand |
 | Charts | Recharts |
 | Styling | Tailwind CSS v4 |
 | Testing | Vitest + React Testing Library |

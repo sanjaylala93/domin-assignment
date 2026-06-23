@@ -71,15 +71,9 @@ The design system lives at `src/design-system/` and is aliased as `@domin/ui` so
 
 ## Architecture
 
-See `architecture_diagram.png` for the full system diagram (Part 1 of the task).
+The system architecture diagram (Part 1) covers the full production system — from machinery telemetry through DAQ and PostgreSQL, to a Python REST/SSE API, to the React frontend.
 
-At a high level:
-
-- **Layer 1 — Infrastructure:** Machinery reports telemetry (temp, pressure, RPM etc.) via a DAQ process into PostgreSQL
-- **Layer 2 — API:** Python REST API exposes static endpoints (polling) and SSE endpoints (streaming) behind an auth layer
-- **Layer 3 — Frontend:** TanStack Query handles polling/SSE, domain hooks encapsulate business logic, a component layer built on top of the design system renders the UI
-
-In this submission the API layer is replaced by `src/mock/` — a browser-side simulator that generates realistic machine state and history data.
+In this submission, the API layer is replaced by `src/mock/` — a browser-side simulator that generates realistic machine state and history data.
 
 ---
 
